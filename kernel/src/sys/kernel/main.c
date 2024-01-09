@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <sys/gdt.h>
 #include <sys/tty.h>
 
 // Set the base revision to 1, this is recommended as this is the latest
@@ -46,6 +47,13 @@ void _start(void) {
     tty_init((uint32_t *)fb_ptr, framebuffer->width, framebuffer->height, framebuffer->pitch);
     const char msg[] = "Kernel\n";
     tty_write(msg, sizeof(msg));
+
+    const char done_msg[] = " Done\n";
+
+    const char gdt_msg[] = "Loading Global Descriptor Table...";
+    tty_write(gdt_msg, sizeof(gdt_msg));
+    gdt_setup();
+    tty_write(done_msg, sizeof(done_msg));
 
     hcf();
 }
